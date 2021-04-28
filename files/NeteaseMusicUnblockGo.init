@@ -1,0 +1,43 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2018 wongsyrone
+
+. /lib/functions.sh
+. /usr/share/libubox/jshn.sh
+
+START=995
+USE_PROCD=1
+#PROCD_DEBUG=1
+
+PORT=5200
+SPORT=443
+LOGFILE=/tmp/NeteaseMusicUnblockGo.log
+
+
+PROG=/usr/bin/NeteaseMusicUnblockGo
+CONFDIR=/etc/NeteaseMusicUnblockGo
+
+config_load "NeteaseMusicUnblockGo"
+
+parse_NeteaseMusicUnblockGo() {
+    config_get ENABLED "$section" "enabled"
+}
+
+config_foreach parse_NeteaseMusicUnblockGo 'NeteaseMusicUnblockGo'
+
+start_service() {
+    if [ "1" = "$ENABLED" ] || [ "on" = "$ENABLED" ] || [ "true" = "$ENABLED" ]; then
+            procd_open_instance
+            procd_set_param command $PROG -c $CONFDIR/server.crt -k $CONFDIR/server.key -p $PORT -sp $SPORT -l $LOGFILE
+            procd_set_param user root # run service as user root
+            procd_set_param stdout 1 # forward stdout of the command to logd
+            procd_set_param stderr 1 # same for stderr
+            procd_set_param limits nofile="1048576 1048576" # max allowed value can be fetched via /proc/sys/fs/nr_open
+            [ -e /proc/sys/kernel/core_pattern ] && {
+                    procd_append_param limits core="unlimited"
+            }
+            procd_close_instance
+    else
+        echo "NeteaseMusicUnblockGo is disabled, please check /etc/config/NeteaseMusicUnblockGo"
+    fi
+}
+
