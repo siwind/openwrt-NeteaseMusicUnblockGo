@@ -41,3 +41,19 @@ start_service() {
     fi
 }
 
+stop(){
+    #restore hosts
+    cp -f /etc/hosts.gBackup  /etc/hosts
+    rm -f /tmp/NeteaseMusic*.log
+}
+
+shutdown() {
+  # The service is finished, so turn off the hardware
+  stop
+}
+
+restart(){
+  stop
+  start
+}
+
