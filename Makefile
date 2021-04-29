@@ -70,10 +70,11 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/UnblockNeteaseMusic $(1)/usr/bin/NeteaseMusicUnblockGo
-	$$(INSTALL_DIR) $$(1)/etc
-    $$(INSTALL_DIR) $$(1)/etc/init.d
-    $$(INSTALL_BIN) ./files/$(1).init $$(1)/etc/init.d/$(1)
-	$(CP) ./files/$(1).config $(1)/etc/config/$(1)
+	$$(INSTALL_DIR) $(1)/etc
+	$$(INSTALL_DIR) $(1)/etc/init.d
+	$$(INSTALL_BIN) ./files/$(PKG_NAME).init $(1)/etc/init.d/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/config
+	$(CP) ./files/$(PKG_NAME).config $(1)/etc/config/$(PKG_NAME)
 
 	$(INSTALL_DIR) $(1)/etc/NeteaseMusicUnblockGo
 	$(CP) ./files/ca/* $(1)/etc/NeteaseMusicUnblockGo/
